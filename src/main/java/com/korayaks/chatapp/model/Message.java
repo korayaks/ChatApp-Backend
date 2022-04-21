@@ -2,6 +2,8 @@ package com.korayaks.chatapp.model;
 
 import lombok.*;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

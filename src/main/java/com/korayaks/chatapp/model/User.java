@@ -3,6 +3,7 @@ package com.korayaks.chatapp.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @AllArgsConstructor
+@ToString
 @Table(name="Users")
 public class User {
     @Id
