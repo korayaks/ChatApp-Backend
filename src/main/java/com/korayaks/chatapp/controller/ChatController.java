@@ -2,8 +2,10 @@ package com.korayaks.chatapp.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.korayaks.chatapp.model.IntroduceMessage;
 import com.korayaks.chatapp.model.Message;
 import com.korayaks.chatapp.model.User;
+import com.korayaks.chatapp.service.MessageService;
 import com.korayaks.chatapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,7 +13,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class ChatController {
     UserService userService;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    MessageService messageService;
 
     @MessageMapping("/message")
     @SendTo("/chatroom/public")
@@ -33,9 +36,17 @@ public class ChatController {
 
     @MessageMapping("/private-message")
     public Message recMessage(@Payload Message message){
+        messageService.saveMessage(message);
         simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(),"/private",message);
         System.out.println(message.toString());
         return message;
+    }
+
+    @MessageMapping("/introduce")
+    @SendTo("/client/introduce")
+    public IntroduceMessage introduce(@Payload IntroduceMessage introduceMessage) {
+        simpMessagingTemplate.convertAndSendToUser(introduceMessage.getReceiverName(),"/client/introduce",introduceMessage);
+        return introduceMessage;
     }
 
     @MessageMapping("/registerOrLogin")
@@ -57,4 +68,6 @@ public class ChatController {
         simpMessagingTemplate.convertAndSendToUser(user.getUsername(),"/client/userList", jsonUserList);
         return userList;
     }
+
+
 }
