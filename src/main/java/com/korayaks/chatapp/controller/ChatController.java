@@ -20,7 +20,7 @@ import java.util.List;
 public class ChatController {
 
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+    SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     UserService userService;
     @Autowired
@@ -35,10 +35,11 @@ public class ChatController {
     }
 
     @MessageMapping("/private-message")
-    public Message recMessage(@Payload Message message){
-        messageService.saveMessage(message);
+    public Message recMessage(@Payload Message message) throws InterruptedException {
+        Thread.sleep(1000);
         simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(),"/private",message);
-        System.out.println(message.toString());
+        messageService.saveMessage(message);
+        System.out.println("Gönderilen mesaj : " + message.toString());
         return message;
     }
 
@@ -51,13 +52,26 @@ public class ChatController {
 
     @MessageMapping("/registerOrLogin")
     @SendTo("/client/registerOrLogin")
-    public boolean registerOrLogin(@Payload User user){
+    public Message registerOrLogin(@Payload User user) throws InterruptedException {
         Message message = new Message();
         boolean result = userService.registerOrLogin(user);
         message.setMessage(String.valueOf(result));
         System.out.println("girdi ");
         simpMessagingTemplate.convertAndSendToUser(user.getUsername(),"/client/registerOrLogin", message);
-        return result;
+
+
+        List<Message> unreadMessages = messageService.getUnreadMessages(user.getUsername());
+        System.out.println(unreadMessages);
+        if(unreadMessages.size()>0){
+            for (Message unreadMessage :
+                    unreadMessages) {
+                recMessage(unreadMessage);
+               // unreadMessage.setReceived("Yes");
+                //messageService.saveMessage(unreadMessage);
+            }
+        }
+
+        return message;
     }
 
     @MessageMapping("/userList")

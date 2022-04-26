@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -14,13 +16,34 @@ public class MessageServiceImpl implements MessageService {
     MessageRepository messageRepository;
     @Override
     public void saveMessage(Message message) {
-        Message newMessage = new Message();
-        newMessage.setMessage(message.getMessage());
-        newMessage.setSenderName(message.getSenderName());
-        newMessage.setDate(LocalDateTime.now());
-        newMessage.setReceived(message.getReceived());
-        newMessage.setStatus(message.getStatus());
-        newMessage.setReceiverName(message.getReceiverName());
-        messageRepository.save(newMessage);
+        if(messageRepository.findMessageById(message.getId()) == null){
+            Message newMessage = new Message();
+            newMessage.setMessage(message.getMessage());
+            newMessage.setSenderName(message.getSenderName());
+            newMessage.setDate(LocalDateTime.now());
+            newMessage.setReceived(message.getReceived());
+            newMessage.setStatus(message.getStatus());
+            newMessage.setReceiverName(message.getReceiverName());
+            messageRepository.save(newMessage);
+            System.out.println("MESAJ KAYDEDİLDİ");
+        }else{
+            message.setReceived("Yes");
+            messageRepository.save(message);
+        }
+    }
+
+    @Override
+    public List<Message> getUnreadMessages(String username) {
+        //get unread messages
+        List<Message> allReceivedMessages = messageRepository.findMessagesByReceiverName(username);
+        List<Message> unreadMessages = new ArrayList<>();
+        for (Message message :
+                allReceivedMessages) {
+            if(message.getReceived().equals("No")){
+                System.out.println("No'lu mesaj " + message);
+                unreadMessages.add(message);
+            }
+        }
+        return unreadMessages;
     }
 }
