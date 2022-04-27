@@ -19,8 +19,6 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     @Autowired
     MessageRepository messageRepository;
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -31,21 +29,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserById(id);
     }
 
-    @MessageMapping("/private-message")
     @Override
     public boolean registerOrLogin(User user) {
         if(userRepository.findUserByUsername(user.getUsername()) == null)
         {
-            System.out.println("kayit");
+            System.out.println("Kullanıcı kayit oldu : " + user);
             userRepository.save(user);
             return true;
         }else if((userRepository.findUserByUsername(user.getUsername())).getPassword().equals(user.getPassword()))
         {
-            System.out.println("giris");
+            System.out.println("Kullanıcı giriş yaptı : " + user);
             return true;
+        }else{
+            System.out.println("Kullanıcı yanlış giriş yaptı : " + user);
+            return false;
         }
-        System.out.println("basarisiz");
-        return false;
     }
 
 }

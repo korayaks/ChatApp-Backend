@@ -25,7 +25,7 @@ public class MessageServiceImpl implements MessageService {
             newMessage.setStatus(message.getStatus());
             newMessage.setReceiverName(message.getReceiverName());
             messageRepository.save(newMessage);
-            System.out.println("MESAJ KAYDEDİLDİ");
+            System.out.println("Mesaj kaydedildi.");
         }else{
             message.setReceived("Yes");
             messageRepository.save(message);
@@ -40,7 +40,6 @@ public class MessageServiceImpl implements MessageService {
         for (Message message :
                 allReceivedMessages) {
             if(message.getReceived().equals("No")){
-                System.out.println("No'lu mesaj " + message);
                 unreadMessages.add(message);
             }
         }

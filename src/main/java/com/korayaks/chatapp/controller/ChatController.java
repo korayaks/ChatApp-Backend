@@ -39,7 +39,7 @@ public class ChatController {
         Thread.sleep(1000);
         simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(),"/private",message);
         messageService.saveMessage(message);
-        System.out.println("Gönderilen mesaj : " + message.toString());
+        System.out.println("Gönderilen mesaj : " + message);
         return message;
     }
 
@@ -56,7 +56,6 @@ public class ChatController {
         Message message = new Message();
         boolean result = userService.registerOrLogin(user);
         message.setMessage(String.valueOf(result));
-        System.out.println("girdi ");
         simpMessagingTemplate.convertAndSendToUser(user.getUsername(),"/client/registerOrLogin", message);
 
 
@@ -66,11 +65,8 @@ public class ChatController {
             for (Message unreadMessage :
                     unreadMessages) {
                 recMessage(unreadMessage);
-               // unreadMessage.setReceived("Yes");
-                //messageService.saveMessage(unreadMessage);
             }
         }
-
         return message;
     }
 
