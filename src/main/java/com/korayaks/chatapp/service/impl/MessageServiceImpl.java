@@ -17,15 +17,23 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void saveMessage(Message message) {
         if(messageRepository.findMessageById(message.getId()) == null){
-            Message newMessage = new Message();
-            newMessage.setMessage(message.getMessage());
-            newMessage.setSenderName(message.getSenderName());
-            newMessage.setDate(LocalDateTime.now());
-            newMessage.setReceived(message.getReceived());
-            newMessage.setStatus(message.getStatus());
-            newMessage.setReceiverName(message.getReceiverName());
-            messageRepository.save(newMessage);
-            System.out.println("Mesaj kaydedildi.");
+                Message newMessage = new Message();
+                newMessage.setMessage(message.getMessage());
+                newMessage.setSenderName(message.getSenderName());
+                newMessage.setDate(LocalDateTime.now());
+                newMessage.setStatus(message.getStatus());
+            if(message.getReceiverName() != null){
+                newMessage.setReceiverName(message.getReceiverName());
+                newMessage.setReceived(message.getReceived());
+                messageRepository.save(newMessage);
+                System.out.println("Mesaj kaydedildi. (Private mesaj)");
+            }else if(message.getMessage() != null){
+                newMessage.setReceiverName("CHATROOM");
+                newMessage.setReceived("Yes");
+                messageRepository.save(newMessage);
+                System.out.println("Mesaj kaydedildi. (Public mesaj)");
+            }
+
         }else{
             message.setReceived("Yes");
             messageRepository.save(message);

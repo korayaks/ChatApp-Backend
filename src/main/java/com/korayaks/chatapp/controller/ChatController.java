@@ -31,6 +31,7 @@ public class ChatController {
     @MessageMapping("/message")
     @SendTo("/chatroom/public")
     public Message receiveMessage(@Payload Message message){
+        messageService.saveMessage(message);
         return message;
     }
 
@@ -57,7 +58,6 @@ public class ChatController {
         boolean result = userService.registerOrLogin(user);
         message.setMessage(String.valueOf(result));
         simpMessagingTemplate.convertAndSendToUser(user.getUsername(),"/client/registerOrLogin", message);
-
 
         List<Message> unreadMessages = messageService.getUnreadMessages(user.getUsername());
         System.out.println(unreadMessages);
