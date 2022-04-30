@@ -1,16 +1,14 @@
 package com.korayaks.chatapp.service.impl;
 
-import com.korayaks.chatapp.model.Message;
 import com.korayaks.chatapp.model.User;
+import com.korayaks.chatapp.repository.GroupChatUsersRepository;
 import com.korayaks.chatapp.repository.MessageRepository;
 import com.korayaks.chatapp.repository.UserRepository;
+import com.korayaks.chatapp.service.GroupChatUsersService;
 import com.korayaks.chatapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,6 +17,8 @@ public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     @Autowired
     MessageRepository messageRepository;
+    @Autowired
+    GroupChatUsersService groupChatUsersService;
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
         if(userRepository.findUserByUsername(user.getUsername()) == null)
         {
             System.out.println("Kullanıcı kayit oldu : " + user);
+            groupChatUsersService.saveGroupChatUsers(user);
             userRepository.save(user);
             return true;
         }else if((userRepository.findUserByUsername(user.getUsername())).getPassword().equals(user.getPassword()))

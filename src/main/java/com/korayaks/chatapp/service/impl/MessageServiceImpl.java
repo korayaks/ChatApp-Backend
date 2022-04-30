@@ -1,6 +1,7 @@
 package com.korayaks.chatapp.service.impl;
 
 import com.korayaks.chatapp.model.Message;
+import com.korayaks.chatapp.model.Status;
 import com.korayaks.chatapp.repository.MessageRepository;
 import com.korayaks.chatapp.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,15 @@ public class MessageServiceImpl implements MessageService {
                 messageRepository.save(newMessage);
                 System.out.println("Mesaj kaydedildi. (Private mesaj)");
             }else if(message.getMessage() != null){
-                newMessage.setReceiverName("CHATROOM");
+                if(message.getStatus().equals(Status.MESSAGE)){
+                    newMessage.setReceiverName("PUBLIC_MESSAGE");
+                }else if(message.getStatus().equals(Status.GROUP_MESSAGE)){
+                    newMessage.setReceiverName("GROUP_MESSAGE");
+                }
                 newMessage.setReceived("Yes");
                 messageRepository.save(newMessage);
                 System.out.println("Mesaj kaydedildi. (Public mesaj)");
             }
-
         }else{
             message.setReceived("Yes");
             messageRepository.save(message);
