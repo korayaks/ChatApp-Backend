@@ -7,6 +7,8 @@ import com.korayaks.chatapp.service.GroupChatUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GroupChatUsersServiceImpl implements GroupChatUsersService {
     @Autowired
@@ -33,5 +35,10 @@ public class GroupChatUsersServiceImpl implements GroupChatUsersService {
             groupChatUsersRepository.save(groupChatUsers);
         }
         return  groupChatUsers;
+    }
+
+    @Override
+    public List<GroupChatUsers> usersInGroup(String inGroup) {
+        return groupChatUsersRepository.findGroupChatUsersByInGroup("true");
     }
 }
