@@ -29,7 +29,7 @@ public class MessageServiceImpl implements MessageService {
                 messageRepository.save(newMessage);
                 System.out.println("Mesaj kaydedildi. (Private mesaj)");
             }else if(message.getMessage() != null){
-                if(message.getStatus().equals(Status.MESSAGE)){
+                if(message.getStatus().equals(Status.PUBLIC_MESSAGE)){
                     newMessage.setReceiverName("PUBLIC_MESSAGE");
                 }else if(message.getStatus().equals(Status.GROUP_MESSAGE)){
                     newMessage.setReceiverName("GROUP_MESSAGE");

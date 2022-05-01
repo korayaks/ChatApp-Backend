@@ -32,11 +32,13 @@ public class ChatController {
     @MessageMapping("/message")
     @SendTo("/chatroom/public")
     public Message receiveMessage(@Payload Message message){
+        System.out.println(message);
         if(message.getStatus().equals(Status.JOIN)){
             message.setMessage(groupChatUsersService.getGroupChatUsers(message.getSenderName()).getInGroup());
-        }else if(message.getStatus().equals(Status.MESSAGE)){
+        }else if(message.getStatus().equals(Status.PUBLIC_MESSAGE)){
             messageService.saveMessage(message);
         }
+
         return message;
     }
     @MessageMapping("/groupMessage")
@@ -48,14 +50,17 @@ public class ChatController {
         }else if(message.getStatus().equals(Status.GROUP_MESSAGE)){
             messageService.saveMessage(message);
         }
-
         return message;
     }
 
     @MessageMapping("/private-message")
     public Message recMessage(@Payload Message message) throws InterruptedException {
         Thread.sleep(1000);
-        simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(),"/private",message);
+        if(message.getStatus().equals(Status.PRIVATE_MESSAGE)){
+            simpMessagingTemplate.convertAndSendToUser(message.getReceiverName(),"/private",message);
+        }else if(message.getStatus().equals(Status.PUBLIC_MESSAGE)){
+            simpMessagingTemplate.convertAndSend("/chatroom/public",message);
+        }
         messageService.saveMessage(message);
         System.out.println("Gönderilen mesaj : " + message);
         return message;
@@ -80,7 +85,6 @@ public class ChatController {
             for (Message unreadMessage :
                     unreadMessages) {
                 recMessage(unreadMessage);
-
             }
         }
         return message;
@@ -93,6 +97,7 @@ public class ChatController {
         simpMessagingTemplate.convertAndSendToUser(user.getUsername(),"/client/userList", jsonUserList);
         return userList;
     }
+
 
 
 
